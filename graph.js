@@ -24,19 +24,19 @@ class Graph {
 
   // this function accepts two vertices and updates their adjacent values to include the other vertex
   addEdge(v1, v2) {
-    for(item of this.nodes) {
+    for(let item of this.nodes) {
       if (item === v1) {
-        item.adjacent = v2;
+        item.adjacent.add(v2)
       }
       if (item === v2) {
-        item.adjacent = v1;
+        item.adjacent.add(v1)
       }
     }
   }
 
   // this function accepts two vertices and updates their adjacent values to remove the other vertex
   removeEdge(v1, v2) {
-    for(item of this.nodes) {
+    for(let item of this.nodes) {
       if(item === v1) {
         item.adjacent.delete(v2);
       }
@@ -48,14 +48,56 @@ class Graph {
 
   // this function accepts a vertex and removes it from the nodes property, it also updates any adjacency lists that include that vertex
   removeVertex(vertex) {
-    
+    for(let item of this.nodes) {
+      if(item === vertex) {
+        this.nodes.delete(vertex);
+      } else {
+        if(item.adjacent.has(vertex)) {
+          item.adjacent.delete(vertex);
+        }
+      }
+    } 
   }
 
   // this function returns an array of Node values using DFS
-  depthFirstSearch(start) {}
+  depthFirstSearch(start) {
+    let searchArray = [];
+    let toVisitStack = [start];
+    let seenNodes = new Set(toVisitStack);
+
+    while(toVisitStack.length > 0) {
+      let currentItem = toVisitStack.pop(); 
+      searchArray.push(currentItem.value);
+      console.log(currentItem.value)
+      
+      for (let neighbor of currentItem.adjacent) {
+        if(!seenNodes.has(neighbor)) {
+          toVisitStack.push(neighbor);
+          seenNodes.add(neighbor);
+        }
+      }
+    } return searchArray;
+  }
 
   // this function returns an array of Node values using BFS
-  breadthFirstSearch(start) {}
+  breadthFirstSearch(start) {
+    let searchArray = [];
+    let toVisitQueue = [start];
+    let seenNodes = new Set(toVisitQueue);
+
+    while(toVisitQueue.length > 0) {
+      let currentItem = toVisitQueue.shift(); 
+      searchArray.push(currentItem.value);
+      
+      for (let neighbor of currentItem.adjacent) {
+        if(!seenNodes.has(neighbor)) {
+          toVisitQueue.push(neighbor);
+          seenNodes.add(neighbor);
+        }
+      }
+    } return searchArray;
+  }
+
 }
 
 module.exports = {Graph, Node}
